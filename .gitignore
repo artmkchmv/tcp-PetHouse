@@ -1,0 +1,31 @@
+# Build and dependencies
+target/
+build/
+*.jar
+*.war
+*.ear
+
+# VS Code
+.vscode/
+
+# Maven
+.mvn/
+
+# Logs
+logs/
+*.log
+hs_err_pid*
+
+# Environment variables and sensitive files
+.env
+*.properties
+*.yml
+
+# Cache and temporary files
+*.class
+*.swp
+*.swo
+
+# OS-specific files
+.DS_Store
+Thumbs.db
