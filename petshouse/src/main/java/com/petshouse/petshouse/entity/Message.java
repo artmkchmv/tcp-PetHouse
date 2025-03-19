@@ -13,23 +13,24 @@ import java.time.LocalDateTime;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "message_id")
     private Long messageId;
 
     @ManyToOne
-    @JoinColumn(name = "messageSenderId", nullable = false)
+    @JoinColumn(name = "message_sender_id", nullable = false)
     private User sender;
 
     @ManyToOne
-    @JoinColumn(name = "messageReceiverId", nullable = false)
+    @JoinColumn(name = "message_receiver_id", nullable = false)
     private User receiver;
 
     @ManyToOne
-    @JoinColumn(name = "messagePetId", nullable = false)
+    @JoinColumn(name = "message_pet_id", nullable = false)
     private Pet pet;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(name = "message_text", nullable = false, columnDefinition = "TEXT")
     private String messageText;
 
-    @Column(nullable = false)
+    @Column(name = "message_timestamp", nullable = false)
     private LocalDateTime messageTimeStamp = LocalDateTime.now();
 }
