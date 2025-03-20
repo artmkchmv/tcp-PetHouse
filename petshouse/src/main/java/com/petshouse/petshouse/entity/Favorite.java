@@ -10,13 +10,16 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Favorite {
-    @Id
+    @EmbeddedId
+    private FavoriteId id;
+
     @ManyToOne
+    @MapsId("user")
     @JoinColumn(name = "favUserId", nullable = false)
     private User user;
 
-    @Id
     @ManyToOne
+    @MapsId("pet")
     @JoinColumn(name = "favPetId", nullable = false)
     private Pet pet;
 }
