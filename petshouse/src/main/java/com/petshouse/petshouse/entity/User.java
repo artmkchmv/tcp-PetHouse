@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -30,4 +32,13 @@ public class User {
 
     @Column(name = "user_location", nullable = false, length = 100)
     private String location;
+
+    public void setHashPassword(String password) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        this.password = passwordEncoder.encode(password);
+    }
+
+    public String getHashPassword() {
+        return password;
+    }
 }
