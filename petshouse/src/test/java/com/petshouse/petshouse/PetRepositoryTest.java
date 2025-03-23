@@ -23,7 +23,7 @@ public class PetRepositoryTest {
     public void testCreatePet() {
         User user = new User();
         user.setLogin("testuser");
-        user.setPassword("password123");
+        user.setHashPassword("password123");
         user.setEmail("test@example.com");
         user.setLocation("Moscow");
 

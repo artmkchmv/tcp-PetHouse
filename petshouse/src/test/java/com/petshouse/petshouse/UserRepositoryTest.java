@@ -36,6 +36,6 @@ public class UserRepositoryTest {
         assertThat(savedUser.getLocation()).isEqualTo("Moscow");
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        assertTrue(passwordEncoder.matches("password123", savedUser.getPassword()));
+        assertTrue(passwordEncoder.matches("password123", savedUser.getHashPassword()));
     }
 }

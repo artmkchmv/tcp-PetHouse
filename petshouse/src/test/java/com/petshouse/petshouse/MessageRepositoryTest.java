@@ -26,13 +26,13 @@ public class MessageRepositoryTest {
     public void testCreateMessage() {
         User user1 = new User();
         user1.setLogin("testuser1");
-        user1.setPassword("password1231");
+        user1.setHashPassword("password1231");
         user1.setEmail("test1@example.com");
         user1.setLocation("Moscow");
 
         User user2 = new User();
         user2.setLogin("testuser2");
-        user2.setPassword("password1232");
+        user2.setHashPassword("password1232");
         user2.setEmail("test2@example.com");
         user2.setLocation("Washington");
 

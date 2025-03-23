@@ -26,7 +26,7 @@ public class FavoriteRepositoryTest {
     public void testCreateFavorite() {
         User user = new User();
         user.setLogin("testuser1");
-        user.setPassword("password1231");
+        user.setHashPassword("password1231");
         user.setEmail("test1@example.com");
         user.setLocation("Moscow");
 
