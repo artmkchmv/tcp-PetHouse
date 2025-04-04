@@ -10,16 +10,15 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Favorite {
-    @EmbeddedId
-    private FavoriteId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
-    @MapsId("user")
-    @JoinColumn(name = "favUserId", nullable = false)
+    @JoinColumn(name = "fav_user_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @MapsId("pet")
-    @JoinColumn(name = "favPetId", nullable = false)
+    @JoinColumn(name = "fav_pet_id", nullable = false)
     private Pet pet;
 }
