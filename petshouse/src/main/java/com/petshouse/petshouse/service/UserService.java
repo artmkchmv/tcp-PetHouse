@@ -2,29 +2,32 @@ package com.petshouse.petshouse.service;
 
 import com.petshouse.petshouse.entity.User;
 import com.petshouse.petshouse.repository.UserRepository;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
 public class UserService {
-    private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private UserRepository userRepository;
 
-    public User createUser(String login, String password, String email, String location) {
-        User user = new User();
-        user.setLogin(login);
-        user.setPassword(password);
-        user.setEmail(email);
-        user.setLocation(location);
+    public User registerUser(User user) {
+        user.setHashPassword(user.getPassword());
         return userRepository.save(user);
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public boolean authenticateUser(String login, String password) {
+        User user = userRepository.findByLogin(login);
+        if (user != null) {
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            return encoder.matches(password, user.getPassword());
+        }
+        return false;
     }
 }
-
