@@ -10,5 +10,5 @@ import com.petshouse.petshouse.entity.*;
 @Repository
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
-    List<Favorite> findByUser_Id(Long userId);
+    List<Favorite> findByUserId(Long userId);
 }
