@@ -33,7 +33,7 @@ public class FavoriteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(toDto(favorite));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> removeFavorite(@PathVariable Long id) {
         favoriteService.deleteFavorite(id);
         return ResponseEntity.noContent().build();

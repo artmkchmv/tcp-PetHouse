@@ -44,17 +44,17 @@ public class UserController {
             : ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid login or password");
     }
 
-    @PatchMapping("/{id}/email")
+    @PatchMapping("/update/{id}/email")
     public ResponseEntity<UserDto> updateEmail(@PathVariable Long id, @RequestBody UserEmailUpdateRequest request) {
         return ResponseEntity.ok(toDto(userService.updateUserEmail(id, request.getNewEmail())));
     }
 
-    @PatchMapping("/{id}/password")
+    @PatchMapping("/update/{id}/password")
     public ResponseEntity<UserDto> updatePassword(@PathVariable Long id, @RequestBody UserPasswordUpdateRequest request) {
         return ResponseEntity.ok(toDto(userService.updateUserPassword(id, request.getNewPassword())));
     }
 
-    @PatchMapping("/{id}/location")
+    @PatchMapping("/update/{id}/location")
     public ResponseEntity<UserDto> updateLocation(@PathVariable Long id, @RequestBody UserLocationUpdateRequest request) {
         return ResponseEntity.ok(toDto(userService.updateUserLocation(id, request.getNewLocation())));
     }
