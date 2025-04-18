@@ -3,22 +3,18 @@ package com.petshouse.petshouse;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.Test;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import com.petshouse.petshouse.entity.Favorite;
-import com.petshouse.petshouse.entity.Pet;
-import com.petshouse.petshouse.entity.User;
-import com.petshouse.petshouse.repository.FavoriteRepository;
-import com.petshouse.petshouse.repository.PetRepository;
-import com.petshouse.petshouse.repository.UserRepository;
-import com.petshouse.petshouse.service.FavoriteService;
-
-import jakarta.transaction.Transactional;
-
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import com.petshouse.petshouse.entity.*;
+import com.petshouse.petshouse.repository.*;
+import com.petshouse.petshouse.enums.*;
+import com.petshouse.petshouse.service.FavoriteService;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -37,128 +33,131 @@ public class FavoriteServiceTest {
     @Autowired
     private PetRepository petRepository;
 
-    @Test
-    public void testAddFavorite() {
-        User user = new User();
-        user.setLogin("user1");
-        user.setPassword("password123");
-        user.setEmail("user1@example.com");
-        user.setLocation("Moscow");
-
-        User savedUser = userRepository.save(user);
-
-        Pet pet = new Pet();
-        pet.setPetName("Bella");
-        pet.setPetAge(3);
-        pet.setPetType("Dog");
-        pet.setPetDescription("Friendly dog");
-        pet.setPetStatus("available");
-        pet.setPetOwner(savedUser);
-        pet.setPetPhotoURL("www.example.com/photo");
-
-        Pet savedPet = petRepository.save(pet);
-
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
+    public Favorite createFavorite(User user, Pet pet) {
         Favorite favorite = new Favorite();
-        favorite.setUser(savedUser);
-        favorite.setPet(savedPet);
-
-        Favorite savedFavorite = favoriteService.addFavorite(favorite);
-
-        assertThat(savedFavorite).isNotNull();
-        assertThat(savedFavorite.getId()).isNotNull();
-        assertThat(savedFavorite.getUser()).isEqualTo(savedUser);
-        assertThat(savedFavorite.getPet()).isEqualTo(savedPet);
+        favorite.setUser(user);
+        favorite.setPet(pet);
+        return favorite;
     }
 
     @Test
-    public void testRemoveFavorite() {
+    public void testCreateFavorite() {
         User user = new User();
         user.setLogin("user1");
-        user.setPassword("password123");
+        user.setPassword(passwordEncoder.encode("password1"));
         user.setEmail("user1@example.com");
-        user.setLocation("Moscow");
-        User savedUser = userRepository.save(user);
+        user.setLocation("Location1");
+        userRepository.save(user);
 
         Pet pet = new Pet();
-        pet.setPetName("Bella");
-        pet.setPetAge(3);
-        pet.setPetType("Dog");
+        pet.setPetName("Friendly Dog");
+        pet.setPetAge(2);
+        pet.setPetType(PetType.DOG);
         pet.setPetDescription("Friendly dog");
-        pet.setPetStatus("available");
-        pet.setPetOwner(savedUser);
-        pet.setPetPhotoURL("www.example.com/photo");
-        Pet savedPet = petRepository.save(pet);
+        pet.setPetStatus(PetStatus.AVAILABLE);
+        pet.setPetOwner(user);
+        pet.setPetPhotoURL("url1");
+        petRepository.save(pet);
 
-        Favorite favorite = new Favorite();
-        favorite.setUser(savedUser);
-        favorite.setPet(savedPet);
+        Favorite favorite = favoriteService.createFavorite(user, pet);
 
-        Favorite savedFavorite = favoriteRepository.save(favorite);
+        assertThat(favorite).isNotNull();
+        assertThat(favorite.getUser()).isEqualTo(user);
+        assertThat(favorite.getPet()).isEqualTo(pet);
+    }
 
-        favoriteService.removeFavorite(savedFavorite.getId());
+    @Test
+    public void testDeleteFavorite() {
+        User user = new User();
+        user.setLogin("user1");
+        user.setPassword(passwordEncoder.encode("password1"));
+        user.setEmail("user1@example.com");
+        user.setLocation("Location1");
+        userRepository.save(user);
 
-        Optional<Favorite> deletedFavorite = favoriteRepository.findById(savedFavorite.getId());
+        Pet pet = new Pet();
+        pet.setPetName("Friendly Dog");
+        pet.setPetAge(2);
+        pet.setPetType(PetType.DOG);
+        pet.setPetDescription("Friendly dog");
+        pet.setPetStatus(PetStatus.AVAILABLE);
+        pet.setPetOwner(user);
+        pet.setPetPhotoURL("url1");
+        petRepository.save(pet);
+
+        Favorite favorite = favoriteService.createFavorite(user, pet);
+
+        favoriteService.deleteFavorite(favorite.getId());
+
+        Optional<Favorite> deletedFavorite = favoriteRepository.findById(favorite.getId());
         assertThat(deletedFavorite).isEmpty();
     }
 
     @Test
-    public void testGetFavoritesByUser() {
-        User user = new User();
-        user.setLogin("user1");
-        user.setPassword("password123");
-        user.setEmail("user1@example.com");
-        user.setLocation("Moscow");
-        User savedUser = userRepository.save(user);
+    public void testGetFavoritesByUserId() {
+        User user1 = new User();
+        user1.setLogin("user1");
+        user1.setPassword(passwordEncoder.encode("password1"));
+        user1.setEmail("user1@example.com");
+        user1.setLocation("Location1");
+        userRepository.save(user1);
+
+        User user2 = new User();
+        user2.setLogin("user2");
+        user2.setPassword(passwordEncoder.encode("password2"));
+        user2.setEmail("user2@example.com");
+        user2.setLocation("Location2");
+        userRepository.save(user2);
 
         Pet pet1 = new Pet();
-        pet1.setPetName("Bella");
-        pet1.setPetAge(3);
-        pet1.setPetType("Dog");
+        pet1.setPetName("Friendly Dog");
+        pet1.setPetAge(2);
+        pet1.setPetType(PetType.DOG);
         pet1.setPetDescription("Friendly dog");
-        pet1.setPetStatus("available");
-        pet1.setPetOwner(savedUser);
-        pet1.setPetPhotoURL("www.example.com/photo1");
-        Pet savedPet1 = petRepository.save(pet1);
+        pet1.setPetStatus(PetStatus.AVAILABLE);
+        pet1.setPetOwner(user1);
+        pet1.setPetPhotoURL("url1");
+        petRepository.save(pet1);
 
         Pet pet2 = new Pet();
-        pet2.setPetName("Lucy");
-        pet2.setPetAge(2);
-        pet2.setPetType("Cat");
-        pet2.setPetDescription("Playful cat");
-        pet2.setPetStatus("available");
-        pet2.setPetOwner(savedUser);
-        pet2.setPetPhotoURL("www.example.com/photo2");
-        Pet savedPet2 = petRepository.save(pet2);
+        pet2.setPetName("Cute Cat");
+        pet2.setPetAge(1);
+        pet2.setPetType(PetType.CAT);
+        pet2.setPetDescription("Cute cat");
+        pet2.setPetStatus(PetStatus.AVAILABLE);
+        pet2.setPetOwner(user2);
+        pet2.setPetPhotoURL("url2");
+        petRepository.save(pet2);
 
-        Favorite favorite1 = new Favorite();
-        favorite1.setUser(savedUser);
-        favorite1.setPet(savedPet1);
+        favoriteService.createFavorite(user1, pet1);
+        favoriteService.createFavorite(user1, pet2);
+        favoriteService.createFavorite(user2, pet1);
 
-        favoriteRepository.save(favorite1);
+        List<Favorite> favoritesForUser1 = favoriteService.getFavoritesByUserId(user1.getId());
 
-        Favorite favorite2 = new Favorite();
-        favorite2.setUser(savedUser);
-        favorite2.setPet(savedPet2);
+        assertThat(favoritesForUser1).hasSize(2);
+        assertThat(favoritesForUser1.get(0).getPet()).isEqualTo(pet1);
+        assertThat(favoritesForUser1.get(1).getPet()).isEqualTo(pet2);
 
-        favoriteRepository.save(favorite2);
+        List<Favorite> favoritesForUser2 = favoriteService.getFavoritesByUserId(user2.getId());
 
-        List<Favorite> favorites = favoriteService.getFavoritesByUser(savedUser.getId());
-
-        assertThat(favorites).hasSize(2);
-        assertThat(favorites).extracting(Favorite::getUser).contains(savedUser, savedUser);
-        assertThat(favorites).extracting(Favorite::getPet).contains(savedPet1, savedPet2);
+        assertThat(favoritesForUser2).hasSize(1);
+        assertThat(favoritesForUser2.get(0).getPet()).isEqualTo(pet1);
     }
 
     @Test
-    public void testGetFavoritesByUser_NoFavorites() {
+    public void testGetFavoritesByUserIdWhenNoFavorites() {
         User user = new User();
-        user.setLogin("user2");
-        user.setPassword("password123");
-        user.setEmail("user2@example.com");
-        user.setLocation("Moscow");
-        User savedUser = userRepository.save(user);
+        user.setLogin("user3");
+        user.setPassword(passwordEncoder.encode("password3"));
+        user.setEmail("user3@example.com");
+        user.setLocation("Location3");
+        userRepository.save(user);
 
-        List<Favorite> favorites = favoriteService.getFavoritesByUser(savedUser.getId());
+        List<Favorite> favorites = favoriteService.getFavoritesByUserId(user.getId());
 
         assertThat(favorites).isEmpty();
     }

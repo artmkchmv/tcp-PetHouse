@@ -2,22 +2,18 @@ package com.petshouse.petshouse;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import com.petshouse.petshouse.entity.Message;
-import com.petshouse.petshouse.entity.Pet;
-import com.petshouse.petshouse.entity.User;
-import com.petshouse.petshouse.repository.MessageRepository;
-import com.petshouse.petshouse.repository.PetRepository;
-import com.petshouse.petshouse.repository.UserRepository;
-import com.petshouse.petshouse.service.MessageService;
-
-import jakarta.transaction.Transactional;
-
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import com.petshouse.petshouse.entity.*;
+import com.petshouse.petshouse.enums.*;
+import com.petshouse.petshouse.repository.*;
+import com.petshouse.petshouse.service.MessageService;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -36,115 +32,81 @@ public class MessageServiceTest {
     @Autowired
     private PetRepository petRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Test
-    public void testSendMessage() {
-        User sender = new User();
-        sender.setLogin("sender");
-        sender.setPassword("password123");
-        sender.setEmail("sender@example.com");
-        sender.setLocation("Moscow");
+    public void testSaveMessage() {
+        User user1 = new User();
+        user1.setLogin("user1");
+        user1.setPassword(passwordEncoder.encode("password1"));
+        user1.setEmail("user1@example.com");
+        user1.setLocation("Location1");
+        userRepository.save(user1);
 
-        User savedSender = userRepository.save(sender);
-
-        User receiver = new User();
-        receiver.setLogin("receiver");
-        receiver.setPassword("password123");
-        receiver.setEmail("receiver@example.com");
-        receiver.setLocation("Washington");
-
-        User savedReceiver = userRepository.save(receiver);
+        User user2 = new User();
+        user2.setLogin("user2");
+        user2.setPassword(passwordEncoder.encode("password2"));
+        user2.setEmail("user2@example.com");
+        user2.setLocation("Location2");
+        userRepository.save(user2);
 
         Pet pet = new Pet();
-        pet.setPetName("Bella");
-        pet.setPetAge(3);
-        pet.setPetType("Dog");
+        pet.setPetName("Friendly Dog");
+        pet.setPetAge(2);
+        pet.setPetType(PetType.DOG);
         pet.setPetDescription("Friendly dog");
-        pet.setPetStatus("available");
-        pet.setPetOwner(savedSender);
-        pet.setPetPhotoURL("www.example.com/photo");
+        pet.setPetStatus(PetStatus.AVAILABLE);
+        pet.setPetOwner(user1);
+        pet.setPetPhotoURL("url1");
+        petRepository.save(pet);
 
-        Pet savedPet = petRepository.save(pet);
-
-        Message message = new Message();
-        message.setSender(savedSender);
-        message.setReceiver(savedReceiver);
-        message.setPet(savedPet);
-        message.setMessageText("Hello, how are you?");
-
-        Message savedMessage = messageService.sendMessage(message);
+        Message message = messageService.createMessage(user1, user2, pet, "Hello, I am interested in the dog.");
+        
+        Message savedMessage = messageService.saveMessage(message);
 
         assertThat(savedMessage).isNotNull();
-        assertThat(savedMessage.getMessageId()).isNotNull();
-        assertThat(savedMessage.getSender()).isEqualTo(savedSender);
-        assertThat(savedMessage.getReceiver()).isEqualTo(savedReceiver);
-        assertThat(savedMessage.getPet()).isEqualTo(savedPet);
-        assertThat(savedMessage.getMessageText()).isEqualTo("Hello, how are you?");
+        assertThat(savedMessage.getSender()).isEqualTo(user1);
+        assertThat(savedMessage.getReceiver()).isEqualTo(user2);
+        assertThat(savedMessage.getMessageText()).isEqualTo("Hello, I am interested in the dog.");
     }
 
     @Test
-    public void testGetMessagesByUser() {
-        User sender = new User();
-        sender.setLogin("sender");
-        sender.setPassword("password123");
-        sender.setEmail("sender@example.com");
-        sender.setLocation("Moscow");
+    public void testGetConversation() {
+        User user1 = new User();
+        user1.setLogin("user1");
+        user1.setPassword(passwordEncoder.encode("password1"));
+        user1.setEmail("user1@example.com");
+        user1.setLocation("Location1");
+        userRepository.save(user1);
 
-        User savedSender = userRepository.save(sender);
-
-        User receiver = new User();
-        receiver.setLogin("receiver");
-        receiver.setPassword("password123");
-        receiver.setEmail("receiver@example.com");
-        receiver.setLocation("Washington");
-
-        User savedReceiver = userRepository.save(receiver);
+        User user2 = new User();
+        user2.setLogin("user2");
+        user2.setPassword(passwordEncoder.encode("password2"));
+        user2.setEmail("user2@example.com");
+        user2.setLocation("Location2");
+        userRepository.save(user2);
 
         Pet pet = new Pet();
-        pet.setPetName("Bella");
-        pet.setPetAge(3);
-        pet.setPetType("Dog");
+        pet.setPetName("Friendly Dog");
+        pet.setPetAge(2);
+        pet.setPetType(PetType.DOG);
         pet.setPetDescription("Friendly dog");
-        pet.setPetStatus("available");
-        pet.setPetOwner(savedSender);
-        pet.setPetPhotoURL("www.example.com/photo");
+        pet.setPetStatus(PetStatus.AVAILABLE);
+        pet.setPetOwner(user1);
+        pet.setPetPhotoURL("url1");
+        petRepository.save(pet);
 
-        Pet savedPet = petRepository.save(pet);
-
-        Message message1 = new Message();
-        message1.setSender(savedSender);
-        message1.setReceiver(savedReceiver);
-        message1.setPet(savedPet);
-        message1.setMessageText("Hello, how are you?");
-
+        Message message1 = messageService.createMessage(user1, user2, pet, "Hello, I am interested in the dog.");
         messageRepository.save(message1);
 
-        Message message2 = new Message();
-        message2.setSender(savedReceiver);
-        message2.setReceiver(savedSender);
-        message2.setPet(savedPet);
-        message2.setMessageText("I'm good, thanks!");
-
+        Message message2 = messageService.createMessage(user2, user1, pet, "Hi! Tell me more about the dog.");
         messageRepository.save(message2);
 
-        List<Message> messagesForSender = messageService.getMessagesByUser(savedSender.getId());
+        List<Message> conversation = messageService.getConversation(user1.getId(), user2.getId());
 
-        assertThat(messagesForSender).hasSize(2);
-        assertThat(messagesForSender).usingRecursiveComparison()
-        .ignoringFields("sender.registrationDate", "receiver.registrationDate", "messageTimeStamp", "pet.petOwner.registrationDate")
-        .isEqualTo(List.of(message1, message2));
-    }
-
-    @Test
-    public void testGetMessagesByUser_NoMessages() {
-        User user = new User();
-        user.setLogin("user");
-        user.setPassword("password123");
-        user.setEmail("user@example.com");
-        user.setLocation("Moscow");
-        User savedUser = userRepository.save(user);
-
-        List<Message> messagesForUser = messageService.getMessagesByUser(savedUser.getId());
-
-        assertThat(messagesForUser).isEmpty();
+        assertThat(conversation).hasSize(2);
+        assertThat(conversation.get(0).getSender()).isEqualTo(user1);
+        assertThat(conversation.get(1).getSender()).isEqualTo(user2);
     }
 }
