@@ -1,11 +1,13 @@
 package com.petshouse.petshouse.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import com.petshouse.petshouse.dto.favorite.FavoriteDto;
 import com.petshouse.petshouse.entity.*;
 import com.petshouse.petshouse.service.*;
 
@@ -13,37 +15,40 @@ import com.petshouse.petshouse.service.*;
 @RequestMapping("/favorites")
 public class FavoriteController {
 
-    @Autowired
+        @Autowired
     private FavoriteService favoriteService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private PetService petService;
 
-    @Autowired
-    private UserService userService;
-    
-    @PostMapping("/{petId}")
-    public ResponseEntity<Favorite> addFavorite(@PathVariable Long petId, @RequestParam Long userId) {
-        Pet pet = petService.getPetById(petId);
-        User user = userService.getUserById(userId);
-
-        Favorite favorite = new Favorite();
-        favorite.setPet(pet);
-        favorite.setUser(user);
-
-        Favorite savedFavorite = favoriteService.addFavorite(favorite);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedFavorite);
+    private FavoriteDto toDto(Favorite favorite) {
+        return new FavoriteDto(favorite.getId(), favorite.getUser().getId(), favorite.getPet().getPetId());
     }
 
-    @DeleteMapping("/{petId}")
-    public ResponseEntity<Void> removeFavorite(@PathVariable Long petId, @RequestParam Long userId) {
-        List<Favorite> favorites = favoriteService.getFavoritesByUser(userId);
-        for (Favorite favorite : favorites) {
-            if (favorite.getPet().getPetId().equals(petId)) {
-                favoriteService.removeFavorite(favorite.getId());
-                break;
-            }
-        }
+    @PostMapping
+    public ResponseEntity<FavoriteDto> addFavorite(@RequestParam Long userId, @RequestParam Long petId) {
+        User user = userService.getUserById(userId);
+        Pet pet = petService.getPetById(petId);
+
+        Favorite favorite = favoriteService.createFavorite(user, pet);
+        return ResponseEntity.status(HttpStatus.CREATED).body(toDto(favorite));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> removeFavorite(@PathVariable Long id) {
+        favoriteService.deleteFavorite(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<FavoriteDto>> getFavoritesByUser(@PathVariable Long userId) {
+        List<Favorite> favorites = favoriteService.getFavoritesByUserId(userId);
+        List<FavoriteDto> favoriteDtos = favorites.stream()
+            .map(this::toDto)
+            .collect(Collectors.toList());
+        return ResponseEntity.ok(favoriteDtos);
     }
 }
