@@ -12,10 +12,10 @@ import com.petshouse.petshouse.entity.*;
 import com.petshouse.petshouse.service.*;
 
 @RestController
-@RequestMapping("/favorites")
+@RequestMapping("/api/favorites")
 public class FavoriteController {
 
-        @Autowired
+    @Autowired
     private FavoriteService favoriteService;
 
     @Autowired
@@ -23,10 +23,6 @@ public class FavoriteController {
 
     @Autowired
     private PetService petService;
-
-    private FavoriteDto toDto(Favorite favorite) {
-        return new FavoriteDto(favorite.getId(), favorite.getUser().getId(), favorite.getPet().getPetId());
-    }
 
     @PostMapping
     public ResponseEntity<FavoriteDto> addFavorite(@RequestParam Long userId, @RequestParam Long petId) {
@@ -50,5 +46,9 @@ public class FavoriteController {
             .map(this::toDto)
             .collect(Collectors.toList());
         return ResponseEntity.ok(favoriteDtos);
+    }
+
+    private FavoriteDto toDto(Favorite favorite) {
+        return new FavoriteDto(favorite.getId(), favorite.getUser().getId(), favorite.getPet().getPetId());
     }
 }

@@ -12,7 +12,7 @@ import com.petshouse.petshouse.entity.*;
 import com.petshouse.petshouse.service.*;
 
 @RestController
-@RequestMapping("/messages")
+@RequestMapping("/api/messages")
 public class MessageController {
 
     @Autowired
@@ -23,17 +23,6 @@ public class MessageController {
 
     @Autowired
     private PetService petService;
-
-    private MessageDto toDto(Message message) {
-        return new MessageDto(
-            message.getMessageId(),
-            message.getSender().getId(),
-            message.getReceiver().getId(),
-            message.getPet().getPetId(),
-            message.getMessageText(),
-            message.getMessageTimeStamp()
-        );
-    }
 
     @PostMapping
     public ResponseEntity<MessageDto> sendMessage(@RequestParam Long senderId, 
@@ -61,5 +50,16 @@ public class MessageController {
             .map(this::toDto)
             .collect(Collectors.toList());
         return ResponseEntity.ok(messageDtos);
+    }
+
+    private MessageDto toDto(Message message) {
+        return new MessageDto(
+            message.getMessageId(),
+            message.getSender().getId(),
+            message.getReceiver().getId(),
+            message.getPet().getPetId(),
+            message.getMessageText(),
+            message.getMessageTimeStamp()
+        );
     }
 }

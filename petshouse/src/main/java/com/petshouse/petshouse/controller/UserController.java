@@ -9,21 +9,11 @@ import com.petshouse.petshouse.entity.User;
 import com.petshouse.petshouse.service.UserService;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
     private UserService userService;
-
-    private UserDto toDto(User user) {
-        return new UserDto(
-            user.getId(),
-            user.getLogin(),
-            user.getEmail(),
-            user.getLocation(),
-            user.getRegistrationDate()
-        );
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
@@ -69,9 +59,19 @@ public class UserController {
         return ResponseEntity.ok(toDto(userService.updateUserLocation(id, request.getNewLocation())));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUserById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private UserDto toDto(User user) {
+        return new UserDto(
+            user.getId(),
+            user.getLogin(),
+            user.getEmail(),
+            user.getLocation(),
+            user.getRegistrationDate()
+        );
     }
 }

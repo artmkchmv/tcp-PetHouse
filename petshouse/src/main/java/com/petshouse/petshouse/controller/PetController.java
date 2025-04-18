@@ -14,7 +14,7 @@ import com.petshouse.petshouse.enums.PetType;
 import com.petshouse.petshouse.service.*;
 
 @RestController
-@RequestMapping("/pets")
+@RequestMapping("/api/pets")
 public class PetController {
 
     @Autowired
