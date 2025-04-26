@@ -31,9 +31,6 @@ public class PetServiceTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private UserService userService;
-
     @Test
     public void testAddPet() {
         User user = new User();
