@@ -1,8 +1,10 @@
 package com.petshouse.petshouse.dto.pet;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import com.petshouse.petshouse.enums.*;
+import com.petshouse.petshouse.enums.PetStatus;
+import com.petshouse.petshouse.enums.PetType;
 
 @Getter
 @Setter
