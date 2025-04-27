@@ -2,8 +2,20 @@ package com.petshouse.petshouse.entity;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import com.petshouse.petshouse.enums.UserRole;
 
 @Entity
 @Table(name = "users")
@@ -31,4 +43,8 @@ public class User {
 
     @Column(name = "user_location", nullable = false, length = 100)
     private String location;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_role", nullable = false)
+    private UserRole role = UserRole.USER;
 }
