@@ -1,34 +1,23 @@
 package com.petshouse.petshouse.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 import com.petshouse.petshouse.entity.User;
 import com.petshouse.petshouse.repository.UserRepository;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    private String hashPassword(String password) {
-        return passwordEncoder.encode(password);
-    }
-
-    public User getUserById(Long userId) {
-        return userRepository.findById(userId)
-        .orElseThrow(() -> new RuntimeException("User with id " + userId + " not found"));
-    }
-    
-    public User getUserByLogin(String userLogin) {
-        return userRepository.findByLogin(userLogin)
-        .orElseThrow(() -> new RuntimeException("User with login " + userLogin + " not found"));
+    public User saveUser(User user) {
+        return userRepository.save(user);
     }
 
     public User createUser(
@@ -45,12 +34,23 @@ public class UserService {
         return user;
     }
 
-    public User saveUser(User user) {
-        return userRepository.save(user);
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId)
+        .orElseThrow(() -> new RuntimeException("User with id " + userId + " not found"));
     }
+    
+    public User getUserByLogin(String userLogin) {
+        return userRepository.findByLogin(userLogin)
+        .orElseThrow(() -> new RuntimeException("User with login " + userLogin + " not found"));
+    }
+
+
 
     public boolean authenticateUser(String userLogin, String userPassword) {
         User user = getUserByLogin(userLogin);
+        if (user == null) {
+            return false;
+        }
         return passwordEncoder.matches(userPassword, user.getPassword());
     }
 
@@ -85,5 +85,9 @@ public class UserService {
     public void deleteUserById(Long userId) {
         User user = getUserById(userId);
         userRepository.delete(user);
+    }
+
+    private String hashPassword(String password) {
+        return passwordEncoder.encode(password);
     }
 }

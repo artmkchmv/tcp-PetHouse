@@ -2,22 +2,24 @@ package com.petshouse.petshouse.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
 
-import com.petshouse.petshouse.entity.*;
+import com.petshouse.petshouse.entity.Favorite;
+import com.petshouse.petshouse.entity.Pet;
+import com.petshouse.petshouse.entity.User;
 import com.petshouse.petshouse.repository.FavoriteRepository;
 
 @Service
+@RequiredArgsConstructor
 public class FavoriteService {
 
-    @Autowired
-    private FavoriteRepository favoriteRepository;
+    private final FavoriteRepository favoriteRepository;
 
-    private Favorite saveFavorite(Favorite favorite) {
+    public Favorite saveFavorite(Favorite favorite) {
         return favoriteRepository.save(favorite);
     }
-
+    
     public Favorite createFavorite(User user, Pet pet) {
         Favorite favorite = new Favorite();
         favorite.setUser(user);

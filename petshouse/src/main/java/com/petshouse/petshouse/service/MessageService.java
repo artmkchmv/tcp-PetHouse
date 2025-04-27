@@ -2,17 +2,19 @@ package com.petshouse.petshouse.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
 
-import com.petshouse.petshouse.entity.*;
+import com.petshouse.petshouse.entity.Message;
+import com.petshouse.petshouse.entity.Pet;
+import com.petshouse.petshouse.entity.User;
 import com.petshouse.petshouse.repository.MessageRepository;
 
 @Service
+@RequiredArgsConstructor
 public class MessageService {
 
-    @Autowired
-    private MessageRepository messageRepository;
+    private final MessageRepository messageRepository;
 
     public Message saveMessage(Message message) {
         return messageRepository.save(message);
