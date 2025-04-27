@@ -3,26 +3,33 @@ package com.petshouse.petshouse.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
 
 import com.petshouse.petshouse.dto.message.MessageDto;
-import com.petshouse.petshouse.entity.*;
-import com.petshouse.petshouse.service.*;
+import com.petshouse.petshouse.entity.Message;
+import com.petshouse.petshouse.entity.Pet;
+import com.petshouse.petshouse.entity.User;
+import com.petshouse.petshouse.service.MessageService;
+import com.petshouse.petshouse.service.PetService;
+import com.petshouse.petshouse.service.UserService;
 
 @RestController
 @RequestMapping("/api/messages")
+@RequiredArgsConstructor
 public class MessageController {
 
-    @Autowired
-    private MessageService messageService;
+    private final MessageService messageService;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private PetService petService;
+    private final PetService petService;
 
     @PostMapping
     public ResponseEntity<MessageDto> sendMessage(@RequestParam Long senderId, 

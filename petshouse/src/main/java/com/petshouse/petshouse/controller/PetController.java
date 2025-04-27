@@ -3,25 +3,34 @@ package com.petshouse.petshouse.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
 
 import com.petshouse.petshouse.dto.pet.PetDto;
 import com.petshouse.petshouse.entity.Pet;
 import com.petshouse.petshouse.entity.User;
 import com.petshouse.petshouse.enums.PetType;
-import com.petshouse.petshouse.service.*;
+import com.petshouse.petshouse.service.PetService;
+import com.petshouse.petshouse.service.UserService;
 
 @RestController
 @RequestMapping("/api/pets")
+@RequiredArgsConstructor
 public class PetController {
 
-    @Autowired
-    private PetService petService;
+    private final PetService petService;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @GetMapping("/available")
     public ResponseEntity<List<PetDto>> getAllAvailablePets() {
