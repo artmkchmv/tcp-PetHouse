@@ -3,14 +3,13 @@ package com.petshouse.petshouse.enums;
 public enum PetType {
     DOG("Dog"),
     CAT("Cat"),
-    PARROT("Parrot"),
-    HAMSTER("Hamster"),
-    RABBIT("Rabbit"),
-    RAT("Rat"),
-    TORTOISE("Tortoise"),
+    CROW("Crow"),
+    HORSE("Horse"),
+    FROG("Frog"),
+    SPIDER("Spider"),
+    DOVE("Dove"),
     FISH("Fish"),
-    LIZARD("Lizard"),
-    SNAKE("Snake");
+    DRAGON("Dragon");
 
     private final String displayName;
 
