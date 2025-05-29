@@ -9,12 +9,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MessageDto {
+public class GetConversationRequest {
 
-    private Long messageId;
-    private Long senderId;
-    private Long receiverId;
-    private Long petId;
-    private String messageText;
-    private LocalDateTime messageTimeStamp;
+    private Long otherUserId;
+    private String otherUserLogin;
+    private String lastMessageText;
+    private LocalDateTime lastMessageTimestamp;
 }

@@ -1,14 +1,15 @@
 package com.petshouse.petshouse.dto.favorite;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class FavoriteDto {
-    private Long id;
+    
+    private Long favId;
     private Long userId;
     private Long petId;
 }

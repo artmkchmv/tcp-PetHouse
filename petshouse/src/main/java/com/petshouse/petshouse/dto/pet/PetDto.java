@@ -1,18 +1,23 @@
 package com.petshouse.petshouse.dto.pet;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import com.petshouse.petshouse.enums.PetStatus;
 import com.petshouse.petshouse.enums.PetType;
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PetDto {
+    
+    private Long petId;
     private String petName;
     private Integer petAge;
     private PetType petType;
     private String petDescription;
     private PetStatus petStatus;
+    private Long petOwnerId;
     private String petPhotoURL;
 }

@@ -1,10 +1,12 @@
 package com.petshouse.petshouse.dto.jwt;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class JwtResponse {
 
     private final String type = "Bearer";

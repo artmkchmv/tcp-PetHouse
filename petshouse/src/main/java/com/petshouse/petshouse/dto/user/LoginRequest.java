@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserLocationUpdateRequest {
-    
-    private Long id;
-    private String newLocation;
+public class LoginRequest {
+
+    private String login;
 }
