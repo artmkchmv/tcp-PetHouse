@@ -13,6 +13,7 @@ public final class JwtUtils {
         final JwtAuthentication jwtInfoToken = new JwtAuthentication();
         jwtInfoToken.setLogin(claims.getSubject());
         jwtInfoToken.setEmail(claims.get("email", String.class));
+        jwtInfoToken.setLocation(claims.get("location", String.class));
         jwtInfoToken.setRole(getRole(claims));
         return jwtInfoToken;
     }
