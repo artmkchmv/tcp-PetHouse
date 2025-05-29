@@ -7,23 +7,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import lombok.RequiredArgsConstructor;
 
+import com.petshouse.petshouse.dto.favorite.FavoriteAddRequest;
 import com.petshouse.petshouse.dto.favorite.FavoriteDto;
+import com.petshouse.petshouse.dto.favorite.FavoriteIdRequest;
 import com.petshouse.petshouse.entity.Favorite;
 import com.petshouse.petshouse.entity.Pet;
 import com.petshouse.petshouse.entity.User;
+import com.petshouse.petshouse.mapper.FavoriteMapper;
+import com.petshouse.petshouse.security.JwtAuthentication;
+import com.petshouse.petshouse.service.AuthService;
 import com.petshouse.petshouse.service.FavoriteService;
 import com.petshouse.petshouse.service.PetService;
 import com.petshouse.petshouse.service.UserService;
 
 @RestController
-@RequestMapping("/api/favorites")
+@RequestMapping("/api/favorite")
 @RequiredArgsConstructor
 public class FavoriteController {
 
@@ -33,31 +38,41 @@ public class FavoriteController {
 
     private final PetService petService;
 
-    @PostMapping
-    public ResponseEntity<FavoriteDto> addFavorite(@RequestParam Long userId, @RequestParam Long petId) {
-        User user = userService.getUserById(userId);
-        Pet pet = petService.getPetById(petId);
+    private final AuthService authService;
+
+    @PostMapping("/add")
+    public ResponseEntity<FavoriteDto> addFavorite(@RequestBody FavoriteAddRequest request) {
+        User user = userService.getUserById(request.getUserId());
+        Pet pet = petService.getPetById(request.getPetId());
 
         Favorite favorite = favoriteService.createFavorite(user, pet);
-        return ResponseEntity.status(HttpStatus.CREATED).body(toDto(favorite));
+        return ResponseEntity.status(HttpStatus.CREATED).body(FavoriteMapper.toDto(favorite));
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> removeFavorite(@PathVariable Long id) {
-        favoriteService.deleteFavorite(id);
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> removeFavorite(@RequestBody FavoriteIdRequest request) {
+        favoriteService.deleteFavorite(request.getFavId());
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<FavoriteDto>> getFavoritesByUser(@PathVariable Long userId) {
-        List<Favorite> favorites = favoriteService.getFavoritesByUserId(userId);
-        List<FavoriteDto> favoriteDtos = favorites.stream()
-            .map(this::toDto)
-            .collect(Collectors.toList());
-        return ResponseEntity.ok(favoriteDtos);
+    @DeleteMapping("/deleted")
+    public ResponseEntity<Void> removeFavorite(@RequestBody FavoriteAddRequest request) {
+        favoriteService.deleteByUserIdAndPetId(request.getUserId(), request.getPetId());
+        return ResponseEntity.noContent().build();
     }
 
-    private FavoriteDto toDto(Favorite favorite) {
-        return new FavoriteDto(favorite.getId(), favorite.getUser().getId(), favorite.getPet().getPetId());
+    @GetMapping("/user")
+    public ResponseEntity<List<Pet>> getFavoritePetsByUser() {
+        JwtAuthentication auth = authService.getAuthInfo();
+        String login = auth.getLogin();
+        User user = userService.getUserByLogin(login);
+
+        List<Favorite> favorites = favoriteService.getFavoritesByUserId(user.getId());
+
+        List<Pet> favoritePets = favorites.stream()
+            .map(Favorite::getPet)
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(favoritePets);
     }
 }

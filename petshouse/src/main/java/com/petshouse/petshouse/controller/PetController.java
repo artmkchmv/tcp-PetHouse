@@ -7,19 +7,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import lombok.RequiredArgsConstructor;
 
 import com.petshouse.petshouse.dto.pet.PetDto;
+import com.petshouse.petshouse.dto.pet.PetIdRequest;
+import com.petshouse.petshouse.dto.pet.PetNameRequest;
+import com.petshouse.petshouse.dto.pet.PetTypeRequest;
 import com.petshouse.petshouse.entity.Pet;
 import com.petshouse.petshouse.entity.User;
-import com.petshouse.petshouse.enums.PetType;
+import com.petshouse.petshouse.exceptions.BadRequestException;
+import com.petshouse.petshouse.mapper.PetMapper;
 import com.petshouse.petshouse.service.PetService;
 import com.petshouse.petshouse.service.UserService;
 
@@ -35,65 +38,88 @@ public class PetController {
     @GetMapping("/available")
     public ResponseEntity<List<PetDto>> getAllAvailablePets() {
         List<PetDto> pets = petService.getAllAvailablePets().stream()
-                .map(this::toDto)
+                .map(PetMapper::toDto)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(pets);
     }
 
-    @GetMapping("/search/name")
-    public ResponseEntity<List<PetDto>> searchByName(@RequestParam String name) {
-        List<PetDto> pets = petService.getPetsByName(name).stream()
-                .map(this::toDto)
+    @PostMapping("/id")
+    public ResponseEntity<PetDto> getPetById(@RequestBody PetIdRequest request) {
+        if (request.getPetId() == null) {
+            throw new BadRequestException("Pet name must be provided");
+        }
+        Pet pet = petService.getPetById(request.getPetId());
+        return ResponseEntity.ok(PetMapper.toDto(pet));
+    }
+
+    @PostMapping("/name")
+    public ResponseEntity<List<PetDto>> getPetByName(@RequestBody PetNameRequest request) {
+        if (request.getPetName() == null || request.getPetName().isBlank()) {
+            throw new BadRequestException("Pet name must be provided");
+        }
+
+        List<PetDto> pets = petService.getPetsByName(request.getPetName()).stream()
+                .map(PetMapper::toDto)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(pets);
     }
 
-    @GetMapping("/search/type")
-    public ResponseEntity<List<PetDto>> searchByType(@RequestParam PetType type) {
-        List<PetDto> pets = petService.getPetsByType(type).stream()
-                .map(this::toDto)
+    @GetMapping("/type")
+    public ResponseEntity<List<PetDto>> getPetByType(@RequestBody PetTypeRequest request) {
+        if (request.getPetType() == null) {
+            throw new BadRequestException("Pet type must be provided");
+        }
+
+        List<PetDto> pets = petService.getPetsByType(request.getPetType()).stream()
+                .map(PetMapper::toDto)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(pets);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<PetDto> createPet(
-            @RequestBody PetDto petDto,
-            @RequestParam Long ownerId) {
-        User owner = userService.getUserById(ownerId);
+    public ResponseEntity<PetDto> createPet(@RequestBody PetDto request) {
+
+        if (request.getPetOwnerId() == null) {
+            throw new BadRequestException("Owner ID must be provided");
+        }
+
+        if (request.getPetName() == null || request.getPetName().isBlank()) {
+            throw new BadRequestException("Pet name must be provided");
+        }
+
+        User owner = userService.getUserById(request.getPetOwnerId());
+
         Pet pet = petService.createPet(
-                petDto.getPetName(),
-                petDto.getPetAge(),
-                petDto.getPetType(),
-                petDto.getPetDescription(),
-                petDto.getPetStatus(),
+                request.getPetName(),
+                request.getPetAge(),
+                request.getPetType(),
+                request.getPetDescription(),
+                request.getPetStatus(),
                 owner,
-                petDto.getPetPhotoURL()
+                request.getPetPhotoURL()
         );
-        petService.savePet(pet);
-        return ResponseEntity.status(HttpStatus.CREATED).body(toDto(pet));
+
+        Pet saved = petService.savePet(pet);
+        return ResponseEntity.status(HttpStatus.CREATED).body(PetMapper.toDto(saved));
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<PetDto> updatePet(@PathVariable Long id, @RequestBody PetDto petDto) {
-        Pet updatedPet = petService.updatePet(id, petDto);
-        return ResponseEntity.ok(toDto(updatedPet));
+    @PutMapping("/update")
+    public ResponseEntity<PetDto> updatePet(@RequestBody PetDto request) {
+        if (request.getPetId() == null) {
+            throw new BadRequestException("Pet ID must be provided for update");
+        }
+
+        Pet updatedPet = petService.updatePet(request);
+        return ResponseEntity.ok(PetMapper.toDto(updatedPet));
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deletePet(@PathVariable Long id) {
-        petService.deletePet(id);
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deletePet(@RequestBody PetIdRequest request) {
+        if (request.getPetId() == null) {
+            throw new BadRequestException("Pet ID must be provided for deletion");
+        }
+
+        petService.deletePet(request.getPetId());
         return ResponseEntity.noContent().build();
-    }
-
-    private PetDto toDto(Pet pet) {
-        PetDto dto = new PetDto();
-        dto.setPetName(pet.getPetName());
-        dto.setPetAge(pet.getPetAge());
-        dto.setPetType(pet.getPetType());
-        dto.setPetDescription(pet.getPetDescription());
-        dto.setPetStatus(pet.getPetStatus());
-        dto.setPetPhotoURL(pet.getPetPhotoURL());
-        return dto;
     }
 }
