@@ -6,6 +6,8 @@ import java.util.Map;
 import io.jsonwebtoken.Claims;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,7 @@ import com.petshouse.petshouse.dto.jwt.*;
 import com.petshouse.petshouse.dto.user.UserDto;
 import com.petshouse.petshouse.dto.user.UserRegistrationRequest;
 import com.petshouse.petshouse.entity.User;
+import com.petshouse.petshouse.exceptions.UnauthorizedException;
 import com.petshouse.petshouse.mapper.UserMapper;
 import com.petshouse.petshouse.security.JwtAuthentication;
 import com.petshouse.petshouse.security.JwtProvider;
@@ -43,7 +46,7 @@ public class AuthService {
             refreshStorage.put(user.getLogin(), refreshToken);
             return new JwtResponse(accessToken, refreshToken);
         } else {
-            throw new RuntimeException("Invalid login or password!");
+            throw new UnauthorizedException("Invalid login or password!");
         }
     }
 
@@ -58,7 +61,7 @@ public class AuthService {
                 return new JwtResponse(accessToken, null);
             }
         }
-        return new JwtResponse(null, null);
+        throw new UnauthorizedException("Invalid or expired refresh token!");
     }
 
     public JwtResponse refresh(@NonNull String refreshToken) {
@@ -74,10 +77,14 @@ public class AuthService {
                 return new JwtResponse(accessToken, newRefreshToken);
             }
         }
-        throw new RuntimeException("Invalid JWT!");
+        throw new UnauthorizedException("Invalid or expired refresh token!");
     }
 
     public JwtAuthentication getAuthInfo() {
-        return (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth instanceof JwtAuthentication) {
+            return (JwtAuthentication) auth;
+        }
+        return null;
     }
 }

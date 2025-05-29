@@ -11,6 +11,8 @@ import com.petshouse.petshouse.entity.Pet;
 import com.petshouse.petshouse.entity.User;
 import com.petshouse.petshouse.enums.PetStatus;
 import com.petshouse.petshouse.enums.PetType;
+import com.petshouse.petshouse.exceptions.BadRequestException;
+import com.petshouse.petshouse.exceptions.ResourceNotFoundException;
 import com.petshouse.petshouse.repository.PetRepository;
 
 @Service
@@ -25,7 +27,7 @@ public class PetService {
 
     public Pet getPetById(Long petId) {
         return petRepository.findById(petId)
-        .orElseThrow(() -> new RuntimeException("Pet with id " + petId + " not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("Pet with id " + petId + " not found"));
     }
     
     public Pet createPet(
@@ -37,6 +39,19 @@ public class PetService {
             User petOwner,
             String petPhotoURL
             ) {
+        if (petName == null || petName.isBlank()) {
+            throw new BadRequestException("Pet name must not be empty");
+        }
+        if (petAge <= 0) {
+            throw new BadRequestException("Pet age must be greater than 0");
+        }
+        if (petType == null) {
+            throw new BadRequestException("Pet type must be specified");
+        }
+        if (petOwner == null) {
+            throw new BadRequestException("Pet owner must be provided");
+        }
+
         Pet pet = new Pet();
         pet.setPetName(petName);
         pet.setPetAge(petAge);
@@ -44,8 +59,29 @@ public class PetService {
         pet.setPetDescription(petDescription);
         pet.setPetStatus(petStatus);
         pet.setPetOwner(petOwner);
-        pet.setPetPhotoURL(petPhotoURL);
+
+        if (petPhotoURL == null || petPhotoURL.isBlank()) {
+            String defaultPhoto = getDefaultPhotoByType(petType);
+            pet.setPetPhotoURL(defaultPhoto);
+        } else {
+            pet.setPetPhotoURL(petPhotoURL);
+        }
+
         return pet;
+    }
+
+    private String getDefaultPhotoByType(PetType petType) {
+        return switch (petType) {
+            case DOG -> "/images/dog.png";
+            case CAT -> "/images/cat.png";
+            case FISH -> "/images/fish.png";
+            case FROG -> "/images/frog.png";
+            case HORSE -> "/images/horse.png";
+            case SPIDER -> "/images/spider.png";
+            case CROW -> "/images/crow.png";
+            case DOVE -> "/images/dove.png";
+            case DRAGON -> "/images/dragon.png";
+        };
     }
 
     public List<Pet> getAllAvailablePets() {
@@ -53,16 +89,22 @@ public class PetService {
     }
 
     public List<Pet> getPetsByName(String petName) {
+        if (petName == null || petName.isBlank()) {
+            throw new BadRequestException("Pet name must not be empty");
+        }
         return petRepository.findByPetNameContainingIgnoreCase(petName);
     }
 
     public List<Pet> getPetsByType(PetType petType) {
+        if (petType == null) {
+            throw new BadRequestException("Pet type must be specified");
+        }
         return petRepository.findByPetType(petType);
     }
 
     @Transactional
-    public Pet updatePet(Long petId, PetDto request) {
-        Pet pet = getPetById(petId);
+    public Pet updatePet(PetDto request) {
+        Pet pet = getPetById(request.getPetId());
 
         if (request.getPetName() != null && !request.getPetName().isBlank()) {
             pet.setPetName(request.getPetName());
