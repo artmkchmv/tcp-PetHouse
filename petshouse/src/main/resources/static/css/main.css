@@ -413,7 +413,7 @@ body {
 }
 
 .modal-window form input[type=number] {
-  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .modal-actions {

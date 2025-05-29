@@ -19,7 +19,6 @@ import com.petshouse.petshouse.repository.MessageRepository;
 public class MessageService {
 
     private final MessageRepository messageRepository;
-    private final UserService userService;
 
     public Message saveMessage(Message message) {
         return messageRepository.save(message);
