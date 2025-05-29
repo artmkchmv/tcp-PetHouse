@@ -11,12 +11,12 @@ public class UserMapper {
         if (user == null) {
             return null;
         }
-        return new UserDto(
-            user.getId(),
-            user.getLogin(),
-            user.getEmail(),
-            user.getLocation(),
-            user.getRegistrationDate()
-        );
+        UserDto dto = new UserDto();
+        dto.setId(user.getId());
+        dto.setLogin(user.getLogin()); 
+        dto.setEmail(user.getEmail());
+        dto.setLocation(user.getLocation());
+        dto.setRegistrationDate(user.getRegistrationDate());
+        return dto;
     }
 }
