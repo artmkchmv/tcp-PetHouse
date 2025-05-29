@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.petshouse.petshouse.entity.User;
+import com.petshouse.petshouse.exceptions.BadRequestException;
 import com.petshouse.petshouse.service.UserService;
 
 @SpringBootTest
@@ -85,9 +86,10 @@ public class UserServiceTest {
     public void testUpdateUserPasswordWithNullValue() {
         User user = userService.createUser("testuser", "password123", "test@example.com", "Moscow");
         User savedUser = userService.saveUser(user);
-        User updatedUser = userService.updateUserPassword(savedUser.getId(), null);
-        assertThat(updatedUser).isNotNull();
-        assertThat(updatedUser.getPassword()).isEqualTo(savedUser.getPassword());
+        
+        assertThrows(BadRequestException.class, () -> {
+            userService.updateUserPassword(savedUser.getId(), null);
+        });
     }
 
     @Test
@@ -103,9 +105,10 @@ public class UserServiceTest {
     public void testUpdateUserEmailWithBlankValue() {
         User user = userService.createUser("testuser", "password123", "test@example.com", "Moscow");
         User savedUser = userService.saveUser(user);
-        User updatedUser = userService.updateUserEmail(savedUser.getId(), "");
-        assertThat(updatedUser).isNotNull();
-        assertThat(updatedUser.getEmail()).isEqualTo(savedUser.getEmail());
+        
+        assertThrows(BadRequestException.class, () -> {
+            userService.updateUserEmail(savedUser.getId(), "");
+        });
     }
 
     @Test
@@ -121,9 +124,10 @@ public class UserServiceTest {
     public void testUpdateUserLocationWithBlankValue() {
         User user = userService.createUser("testuser", "password123", "test@example.com", "Moscow");
         User savedUser = userService.saveUser(user);
-        User updatedUser = userService.updateUserLocation(savedUser.getId(), "");
-        assertThat(updatedUser).isNotNull();
-        assertThat(updatedUser.getLocation()).isEqualTo(savedUser.getLocation());
+        
+        assertThrows(BadRequestException.class, () -> {
+            userService.updateUserLocation(savedUser.getId(), "");
+        });
     }
 
     @Test
