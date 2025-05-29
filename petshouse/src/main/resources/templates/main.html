@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pets House</title>
+  <link rel="stylesheet" href="https://use.typekit.net/oov2wcw.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link th:href="@{/css/main.css}" rel="stylesheet" type="text/css" />
+  <script th:src="@{/js/main.js}" defer></script>
+</head>
+<body th:attr="data-logged-in=${currentUser != null}, data-owner-id=${currentUser != null} ? ${currentUser.id} : ''">
+  <div class="wrapper">
+    <input type="checkbox" id="sidebarToggle" hidden />
+    <label for="sidebarToggle" class="toggle-btn"><i class="fa-solid fa-bars"></i></label>
+    <div class="sidebar">
+      <div class="user-info">
+        <h6 id="sidebarLogin" th:text="${currentUser != null ? currentUser.login : 'Guest'}"></h6> 
+        <small id="email" th:text="${currentUser != null ? currentUser.email : 'Unknown'}"></small>
+      </div>
+      <a th:href="@{/main}" class="sidebar-link"><i class="fa-solid fa-paw"></i> Pets</a>
+      <a th:href="@{/favorites}" class="sidebar-link"><i class="fa-solid fa-heart"></i> Favorites</a>
+      <a th:href="@{/messages}" class="sidebar-link"><i class="fa-solid fa-envelope"></i> Messages</a>
+      <a th:href="@{/profile}" class="sidebar-link"><i class="fa-solid fa-user"></i> Profile</a>
+      <div class="auth-buttons">
+        <a th:href="@{/register}" class="sidebar-link"><i class="fa-solid fa-user-plus"></i> Sign Up</a>
+        <a th:href="@{/login}" class="sidebar-link"><i class="fa-solid fa-right-to-bracket"></i> Sign In</a>
+        <a href="#" id="logoutButton" class="sidebar-link" style="display: none;"><i class="fa-solid fa-circle-xmark"></i> Sign Out</a>
+      </div>
+      <div class="sidebar-footer">
+        <img src="images/cat_panel.jpg" alt="Cat" class="mirrored" />
+        <h5 class="sidebar-title"><i class="fa-solid fa-cat"></i>Pets House</h5>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="top-block">
+        <div class="user-header">
+          <h5 id="userName" th:text="${currentUser != null ? currentUser.login : 'Guest'}"></h5>
+          <small><i class="fa-solid fa-location-dot"></i><span id="userLocation" th:text="${currentUser != null ? currentUser.location : 'Unknown'}"> </span></small>
+        </div>
+        <div class="search-filter-box">
+          <input type="text" class="search-input" placeholder="Search pet by name" />
+          <button class="search-button" type="button">Search</button>
+        </div>
+        <div class="filter-buttons">
+            <button type="button" data-type="ALL" class="filter-btn selected" title="All types"><i class="fa-solid fa-border-all"></i></button>
+          <th:block th:each="type : ${petTypes}">
+            <button type="button" th:data-type="${type.name()}" class="filter-btn">
+              <i th:class="${type.name() == 'DOG' ? 'fa-solid fa-dog' :
+                              type.name() == 'CAT' ? 'fa-solid fa-cat' :
+                              type.name() == 'CROW' ? 'fa-solid fa-crow' :
+                              type.name() == 'HORSE' ? 'fa-solid fa-horse' :
+                              type.name() == 'FROG' ? 'fa-solid fa-frog' :
+                              type.name() == 'SPIDER' ? 'fa-solid fa-spider' :
+                              type.name() == 'DOVE' ? 'fa-solid fa-dove' :
+                              type.name() == 'FISH' ? 'fa-solid fa-fish' :
+                              type.name() == 'DRAGON' ? 'fa-solid fa-dragon' : ''}"></i>
+            </button>
+          </th:block>
+          <a th:href="@{/pets/create}" class="filter-btn add-pet-btn" title="Add new pet">
+            <i class="fa-solid fa-plus"></i>
+          </a>
+        </div>
+      </div>
+      <div class="cards-block">
+        <div class="content-box pet-cards">
+        <th:block th:each="pet : ${pets}">
+          <div class="pet-card" th:attr="data-pet-type=${pet.petType}, data-pet-id=${pet.petId}, data-owner-id=${pet.petOwner.id}">
+            <img th:if="${not #strings.isEmpty(pet.petPhotoURL)}" th:src="${pet.petPhotoURL}" alt="Pet Photo" />
+            <img th:if="${#strings.isEmpty(pet.petPhotoURL)}" src="/images/pet-placeholder.jpg" alt="Pet Photo" />
+              <th:block th:if="${currentUser != null}">
+                <button class="favorite-btn" type="button" th:attr="data-pet-id=${pet.petId}" aria-label="Add to favorites">
+                  <i class="fa-regular fa-heart"></i>
+                </button>
+              </th:block>
+            <div class="pet-info">
+              <div class="pet-name" th:text="${pet.petName}">Pet Name</div>
+              <div class="pet-age" th:text="${pet.petAge + ' years'}">Age</div>
+            </div>
+          </div>
+        </th:block>
+        </div>
+      </div>
+    </div>
+    <div id="addPetModal" class="modal-overlay" style="display: none;">
+      <div class="modal-window">
+        <h3>Add New Pet</h3>
+        <form id="addPetForm">
+          <input type="text" name="petName" placeholder="Name" required />
+          <input type="number" name="petAge" placeholder="Age" min="0" required />
+          <select name="petType" required>
+            <option value="" disabled selected>Select Type</option>
+            <option value="DOG">Dog</option>
+            <option value="CAT">Cat</option>
+            <option value="FISH">Fish</option>
+            <option value="FROG">Frog</option>
+            <option value="HORSE">Horse</option>
+            <option value="SPIDER">Spider</option>
+            <option value="CROW">Crow</option>
+            <option value="DOVE">Dove</option>
+            <option value="DRAGON">Dragon</option>
+          </select>
+          <textarea name="petDescription" placeholder="Description"></textarea>
+          <input type="text" name="petPhotoURL" placeholder="Photo URL (optional)" />
+          <div class="modal-actions">
+            <button type="submit" class="submit-btn">Add</button>
+            <button type="button" id="cancelModalBtn" class="cancel-btn">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div id="petDetailModal" class="modal-overlay" style="display: none;">
+    <div class="modal-window pet-detail-window">
+      <span class="close-btn" id="closePetDetailModal">&times;</span>
+      <button id="detailFavoriteBtn" class="favorite-btn modal-favorite-btn" aria-label="Add to favorites">
+        <i class="fa-regular fa-heart"></i>
+      </button>
+      <img id="detailPhoto" src="/images/pet-placeholder.jpg" alt="Pet Photo" />
+      <h2 id="detailName">Pet Name</h2>
+      <p id="detailAge">Age: -- years</p>
+      <p id="detailType">Type: --</p>
+      <p id="detailDescription">Description: --</p>
+      <div class="modal-actions">
+        <button id="messageOwnerBtn" class="submit-btn" style="display: none;"><i class="fa-solid fa-envelope"></i> Send Message Owner</button>
+        <div id="messageForm" style="display: none; margin-top: 10px;">
+          <textarea id="messageText" placeholder="Type your message..." class="message-textarea"></textarea>
+          <div style="margin-top: 5px; display: flex; gap: 10px; justify-content: flex-start;">
+            <button id="sendMessageBtn" class="submit-btn">Send</button>
+            <button id="cancelMessageBtn" class="cancel-btn">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

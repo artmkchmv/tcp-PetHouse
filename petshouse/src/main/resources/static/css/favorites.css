@@ -1,0 +1,280 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: century-gothic, sans-serif;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100%;
+  background-color: #dcc6ab;
+  color: #5c3b22;
+  padding-top: 20px;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#sidebarToggle:checked + .toggle-btn + .sidebar {
+  transform: translateX(0);
+}
+
+.sidebar .sidebar-link {
+  color: #5c3b22;  /* Цвет текста */
+  text-decoration: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  display: block;
+  margin: 5px 0;
+  border-radius: 5px;  /* Уголки кнопок */
+  text-align: center;
+  background-color: #dcc6ab;  /* Цвет фона кнопок */
+  transition: background-color 0.3s ease-in-out;
+}
+
+.sidebar .sidebar-link:hover {
+  background-color: #e3d3c3;  /* Цвет при наведении */
+}
+
+.sidebar-footer {
+  text-align: center;
+  padding: 0; /* можно уменьшить padding */
+  width: 100%;
+}
+
+.sidebar-footer h5 {
+  margin-top: 16px;
+  color: #5c3b22;
+  font-weight: bold;
+  font-size: 28px;
+}
+
+.sidebar-title i {
+  margin-right: 8px; /* или margin-left, если иконка после текста */
+  color: #5c3b22; /* чтобы иконка соответствовала цвету */
+  size: 10px;
+}
+
+.sidebar .auth-buttons a {
+  width: 100%;  /* Убедимся, что кнопки авторизации растягиваются по ширине */
+  padding: 12px;  /* Увеличиваем padding для согласованности с другими кнопками */
+}
+
+.auth-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.auth-buttons a {
+  display: block;
+  width: 90%;
+  margin: 5px 0;
+  padding: 10px;
+  text-align: center;
+  background-color: #dcc6ab;
+  color: white;
+  font-size: 50px;
+  text-decoration: solid;
+  border-radius: 5px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.auth-buttons a:hover {
+  background-color: #e3d3c3;  /* Цвет при наведении, как для других кнопок */
+}
+
+.toggle-btn {
+  font-size: 30px;
+  color: #5c3b22;
+  cursor: pointer;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 2;
+}
+
+.toggle-btn i {
+    font-size: 24px;
+    color: #5c3b22;
+    cursor: pointer;
+}
+
+.sidebar-footer img {
+  width: 100%;       /* ключевое */
+  height: auto;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;  /* по желанию */
+  object-fit: cover; /* добавим, чтобы заполнить контейнер красиво */
+}
+
+.sidebar .sidebar-link {
+  color: white; /* было #5c3b22 */
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.sidebar {
+    padding-top: 60px; /* вместо 20px */
+    border-right: 2px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-link i {
+    color: #5c3b22;
+    font-size: 22px;
+}
+
+.mirrored {
+  transform: scaleX(-1);
+}
+
+#sidebarToggle:not(:checked) ~ .main-content {
+  margin-left: 0;
+}
+
+#sidebarToggle:checked ~ .main-content {
+  margin-left: 250px;
+}
+
+.user-info h6 {
+  color: white;
+  text-align: center;
+  margin: 0;
+  padding: 10px 0;
+  font-size: 20px;
+  text-decoration: solid;
+}
+
+.user-info {
+  text-align: center;
+}
+
+.user-info small {
+  color: #5c3b22;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.pet-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.pet-card {
+  width: 200px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  position: relative;
+  color: #5c3b22;
+}
+
+.pet-card:hover {
+  transform: scale(1.03);
+}
+
+.pet-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.pet-info {
+  margin-top: 8px;
+  text-align: center;
+}
+
+.pet-name {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #5c3b22;
+}
+
+.pet-type,
+.pet-age,
+.pet-location {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 4px 0;
+}
+
+.remove-fav-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #ff6b6b;
+  border: none;
+  border-radius: 50%;
+  color: white;
+  width: 28px;
+  height: 28px;
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 28px;
+  text-align: center;
+}
+
+.remove-fav-btn:hover {
+  background: #ff3b3b;
+}
+
+.pets-container {
+    display: flex;
+    flex-wrap: wrap;           /* чтобы карточки переносились на новую строку */
+    justify-content: center;   /* выравнивание по горизонтали — по центру */
+    gap: 20px;                 /* отступы между карточками */
+    padding: 10px;
+}
+
+.pet-card {
+    flex: 0 1 300px;           /* карточки фиксированной ширины (примерно 300px) */
+    box-sizing: border-box;
+    /* остальные стили, например: */
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    padding: 15px;
+}
+
+.favorites-title {
+    display: block; /* по умолчанию h2 — блочный */
+    width: fit-content; /* чтобы ширина была по содержимому */
+    margin: 20px auto; /* центрирует блок по горизонтали */
+    padding: 10px 30px;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #5c3b22;
+    background-color: #dcc6ab;
+    border-radius: 12px;
+}
+
+.pets-container {
+    background-color: #dcc6ab;
+    padding: 20px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    margin-top: 20px;
+}

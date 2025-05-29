@@ -1,0 +1,303 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: century-gothic, sans-serif;
+}
+
+body {
+    background-color: #dcc6ab;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #dcc6ab;
+    color: #5c3b22;
+    padding-top: 20px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 2px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+}
+
+#sidebarToggle:checked + .toggle-btn + .sidebar {
+    transform: translateX(0);
+}
+
+.sidebar .sidebar-link {
+    color: #5c3b22;  /* Цвет текста */
+    text-decoration: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    display: block;
+    margin: 5px 0;
+    border-radius: 5px;  /* Уголки кнопок */
+    text-align: center;
+    background-color: #dcc6ab;  /* Цвет фона кнопок */
+    transition: background-color 0.3s ease-in-out;
+}
+
+.sidebar .sidebar-link:hover {
+    background-color: #e3d3c3;  /* Цвет при наведении */
+}
+
+.sidebar-footer {
+    text-align: center;
+    padding: 0; /* можно уменьшить padding */
+    width: 100%;
+}
+
+.sidebar-footer h5 {
+    margin-top: 16px;
+    color: #5c3b22;
+    font-weight: bold;
+    font-size: 28px;
+}
+
+.sidebar-title i {
+    margin-right: 8px; /* или margin-left, если иконка после текста */
+    color: #5c3b22; /* чтобы иконка соответствовала цвету */
+    size: 10px;
+}
+
+.sidebar .auth-buttons a {
+    width: 100%;  /* Убедимся, что кнопки авторизации растягиваются по ширине */
+    padding: 12px;  /* Увеличиваем padding для согласованности с другими кнопками */
+}
+
+.auth-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.auth-buttons a {
+    display: block;
+    width: 90%;
+    margin: 5px 0;
+    padding: 10px;
+    text-align: center;
+    background-color: #dcc6ab;
+    color: white;
+    font-size: 50px;
+    text-decoration: solid;
+    border-radius: 5px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.auth-buttons a:hover {
+    background-color: #e3d3c3;  /* Цвет при наведении, как для других кнопок */
+}
+
+.toggle-btn {
+    font-size: 30px;
+    color: #5c3b22;
+    cursor: pointer;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 2;
+}
+
+.toggle-btn i {
+    font-size: 24px;
+    color: #5c3b22;
+    cursor: pointer;
+}
+
+.sidebar-footer img {
+    width: 100%;       /* ключевое */
+    height: auto;
+    display: block;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;  /* по желанию */
+    object-fit: cover; /* добавим, чтобы заполнить контейнер красиво */
+}
+
+.sidebar .sidebar-link {
+    color: white; /* было #5c3b22 */
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.sidebar {
+    padding-top: 60px; /* вместо 20px */
+}
+
+.sidebar-link i {
+    color: #5c3b22;
+    font-size: 22px;
+}
+
+.mirrored {
+    transform: scaleX(-1);
+}
+
+#sidebarToggle:not(:checked) ~ .main-content {
+    margin-left: 0;
+}
+
+#sidebarToggle:checked ~ .main-content {
+    margin-left: 250px;
+}
+
+.user-info h6 {
+    color: white;
+    text-align: center;
+    margin: 0;
+    padding: 10px 0;
+    font-size: 20px;
+    text-decoration: solid;
+}
+
+.user-info {
+    text-align: center;
+}
+
+.user-info small {
+    color: #5c3b22;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* Основной контейнер настроек */
+.settings {
+  background-color: #ebcfb7; /* бежевый светлый фон */
+  max-width: 500px;          /* ограничиваем ширину */
+  margin: 40px auto;         /* центрируем блок горизонтально с отступом сверху */
+  padding: 30px 20px;        /* внутренние отступы */
+  border-radius: 10px;       /* скругление углов */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: center;        /* центрируем текст и кнопки внутри */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;                 /* расстояние между элементами */
+}
+
+.settings > div {
+  margin-bottom: 30px;
+}
+
+/* Заголовки и текущие значения */
+.settings p {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  color: #5c3b22;
+  font-weight: bold;
+}
+
+/* Кнопки */
+.settings button {
+  padding: 8px 16px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  background-color: #5c3b22;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.settings button:hover {
+  background-color: #cbb09c;
+}
+
+/* Инпуты */
+.settings input[type="email"],
+.settings input[type="password"],
+.settings input[type="location"] {
+  padding: 10px;
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  background-color: #fff;
+  color: #5c3b22;
+}
+
+/* Форма изменения (email/location/password) */
+#emailChangeForm,
+#locationChangeForm,
+#passwordChangeForm {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Медиа адаптивность */
+@media (max-width: 768px) {
+  .settings {
+    padding: 20px;
+  }
+
+  .settings input,
+  .settings button {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .settings button {
+    margin-top: 8px;
+    margin-right: 0;
+  }
+
+  #emailChangeForm,
+  #locationChangeForm,
+  #passwordChangeForm {
+    align-items: stretch;
+  }
+}
+
+.delete-account {
+    margin-top: 25px;
+}
+
+#deleteAccountBtn {
+    background-color: #8b211f; 
+    color: white;
+    padding: 10px 15px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer;
+}
+
+#deleteAccountBtn:hover {
+    background-color: #7d1c1b;
+}
+
+.settings input, .settings select {
+  padding: 8px;
+  font-size: 16px;
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#confirmDeleteBtn {
+    display:none; 
+    margin-left: 10px; 
+    background-color: #e53935; 
+    color: white; 
+    border: none; 
+    padding: 10px 15px; 
+    border-radius: 5px; 
+    cursor: pointer;
+}

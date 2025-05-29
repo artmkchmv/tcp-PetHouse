@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile</title>
+    <link rel="stylesheet" href="https://use.typekit.net/oov2wcw.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link th:href="@{/css/profile.css}" rel="stylesheet" type="text/css" />
+    <script th:src="@{/js/profile.js}" defer></script>
+</head>
+<body>
+<div class="wrapper">
+    <input type="checkbox" id="sidebarToggle" hidden />
+    <label for="sidebarToggle" class="toggle-btn"><i class="fa-solid fa-bars"></i></label>
+    <div class="sidebar">
+        <div class="user-info">
+            <h6 id="sidebarLogin" th:text="${currentUser != null ? currentUser.login : 'Guest'}"></h6>
+            <small id="userEmail" th:text="${currentUser != null ? currentUser.email : 'Unknown'}"></small>
+        </div>
+        <a th:href="@{/main}" class="sidebar-link"><i class="fa-solid fa-paw"></i> Pets</a>
+        <a th:href="@{/favorites}" class="sidebar-link"><i class="fa-solid fa-heart"></i> Favorites</a>
+        <a th:href="@{/messages}" class="sidebar-link"><i class="fa-solid fa-envelope"></i> Messages</a>
+        <a th:href="@{/profile}" class="sidebar-link"><i class="fa-solid fa-user"></i> Profile</a>
+        <div class="auth-buttons">
+            <a th:href="@{/register}" class="sidebar-link"><i class="fa-solid fa-user-plus"></i> Sign Up</a>
+            <a th:href="@{/login}" class="sidebar-link"><i class="fa-solid fa-right-to-bracket"></i> Sign In</a>
+            <a href="#" id="logoutButton" class="sidebar-link" style="display: none;"><i class="fa-solid fa-circle-xmark"></i> Sign Out</a>
+        </div>
+        <div class="sidebar-footer">
+            <img src="images/cat_panel.jpg" alt="Cat" class="mirrored" />
+            <h5 class="sidebar-title"><i class="fa-solid fa-cat"></i>Pets House</h5>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="settings">
+            <div class="change-email">
+                <p>Your Email: <span id="currentEmail" th:text="${currentUser.email}"></span></p>
+                <button id="changeEmailBtn" type="button">Change</button>
+                <div id="emailChangeForm" style="display:none; margin-top:10px;">
+                    <input type="email" id="newEmail" placeholder="Enter new email" />
+                    <button id="confirmEmailBtn" type="button">Confirm</button>
+                    <button id="cancelEmailBtn" type="button">Cancel</button>
+                </div>
+            </div>
+            <div class="change-location">
+                <p>Your Location: <span id="currentLocation" th:text="${currentUser.location}"></span></p>
+                <button id="changeLocationBtn" type="button">Change</button>
+                <div id="locationChangeForm" style="display:none; margin-top:10px;">
+                    <select id="newLocation">
+                        <option value="" disabled selected>Select your location</option>
+                        <option th:each="location : ${countries}" th:value="${location}" th:text="${location}"></option>
+                    </select>
+                    <button id="confirmLocationBtn" type="button">Confirm</button>
+                    <button id="cancelLocationBtn" type="button">Cancel</button>
+                </div>
+            </div>
+            <div class="change-password">
+                <button id="changepasswordBtn" type="button">Change password</button>
+                <div id="passwordChangeForm" style="display:none; margin-top:10px;">
+                    <input type="password" id="newpassword" placeholder="Enter new password" />
+                    <button id="confirmpasswordBtn" type="button">Confirm</button>
+                    <button id="cancelpasswordBtn" type="button">Cancel</button>
+                </div>
+            </div>
+            <div class="delete-account">
+                <button id="deleteAccountBtn" type="button">Delete account</button>
+                  <button id="confirmDeleteBtn" type="button">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
